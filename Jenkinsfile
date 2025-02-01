@@ -6,6 +6,7 @@ pipeline {
     }
 
     environment {
+        DOCKER_HOST = "npipe:////./pipe/docker_engine"  // Docker Desktop default pipe
         DOCKER_IMAGE = "saedabukar/stockmaster3000"  // Replace with your Docker Hub repository name
     }
 
