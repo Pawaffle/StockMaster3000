@@ -76,3 +76,12 @@ pipeline {
                             ssh user@your-server 'docker stop vaadin-app || true'
                             ssh user@your-server 'docker run -d --rm -p 8080:8080 --name vaadin-app $DOCKER_IMAGE:latest'
                             """
+                        }
+                    } else {
+                        echo "Skipping deployment. SSH-based deployment is not configured for Windows."
+                    }
+                }
+            }
+        }
+    }
+}
