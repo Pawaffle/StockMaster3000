@@ -14,39 +14,69 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean package -DskipTests'
+                    } else {
+                        error "This pipeline is designed to run on a Unix-based system."
+                    }
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn test'
+                    } else {
+                        error "This pipeline is designed to run on a Unix-based system."
+                    }
+                }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
+                script {
+                    if (isUnix()) {
+                        sh 'docker build -t $DOCKER_IMAGE .'
+                    } else {
+                        error "This pipeline is designed to run on a Unix-based system."
+                    }
+                }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
-                    sh 'docker tag $DOCKER_IMAGE $DOCKER_IMAGE:latest'
-                    sh 'docker push $DOCKER_IMAGE:latest'
+                script {
+                    if (isUnix()) {
+                        withDockerRegistry([credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
+                            sh 'docker tag $DOCKER_IMAGE $DOCKER_IMAGE:latest'
+                            sh 'docker push $DOCKER_IMAGE:latest'
+                        }
+                    } else {
+                        error "This pipeline is designed to run on a Unix-based system."
+                    }
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                sshagent(['server-ssh-key']) {
-                    sh """
-                    ssh user@your-server 'docker pull $DOCKER_IMAGE:latest'
-                    ssh user@your-server 'docker stop vaadin-app || true'
-                    ssh user@your-server 'docker run -d --rm -p 8080:8080 --name vaadin-app $DOCKER_IMAGE:latest'
-                    """
+                script {
+                    if (isUnix()) {
+                        sshagent(['server-ssh-key']) {
+                            sh """
+                            ssh user@your-server 'docker pull $DOCKER_IMAGE:latest'
+                            ssh user@your-server 'docker stop vaadin-app || true'
+                            ssh user@your-server 'docker run -d --rm -p 8080:8080 --name vaadin-app $DOCKER_IMAGE:latest'
+                            """
+                        }
+                    } else {
+                        error "This pipeline is designed to run on a Unix-based system."
+                    }
                 }
             }
         }
