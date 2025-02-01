@@ -78,7 +78,7 @@ pipeline {
             steps {
                 script {
                     // Use docker.withRegistry() to push image to Docker Hub
-                    docker.withRegistry('', 'dockerhub-credentials') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
                         if (isUnix()) {
                             // Tag and push the Docker image
                             sh 'docker tag "$DOCKER_IMAGE" "$DOCKER_IMAGE:latest"'
