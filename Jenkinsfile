@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-   tools {
+    tools {
         maven 'Maven'  // This is the name you gave your Maven installation in Jenkins
     }
 
@@ -47,6 +47,28 @@ pipeline {
                         sh 'docker build -t "$DOCKER_IMAGE" .'
                     } else {
                         bat 'docker build -t "%DOCKER_IMAGE%" .'
+                    }
+                }
+            }
+        }
+
+        stage('Test Docker Image') {  // New stage to test the Docker image
+            steps {
+                script {
+                    echo "Testing Docker image..."
+                    if (isUnix()) {
+                        // Run the Docker image and check if it's working
+                        sh 'docker run -d --name test-container "$DOCKER_IMAGE"'
+                        sh 'docker ps -a'  // To verify the container is running
+                        sh 'docker logs test-container'  // Check logs for any errors
+                        sh 'docker stop test-container'  // Stop the container after test
+                        sh 'docker rm test-container'    // Remove the container
+                    } else {
+                        bat 'docker run -d --name test-container "%DOCKER_IMAGE%"'
+                        bat 'docker ps -a'  // Verify the container is running
+                        bat 'docker logs test-container'  // Check logs
+                        bat 'docker stop test-container'
+                        bat 'docker rm test-container'
                     }
                 }
             }
