@@ -18,7 +18,7 @@ pipeline {
                     if (isUnix()) {
                         sh 'mvn clean package -DskipTests'
                     } else {
-                        error "This pipeline is designed to run on a Unix-based system."
+                        bat 'mvn clean package -DskipTests'
                     }
                 }
             }
@@ -30,7 +30,7 @@ pipeline {
                     if (isUnix()) {
                         sh 'mvn test'
                     } else {
-                        error "This pipeline is designed to run on a Unix-based system."
+                        bat 'mvn test'
                     }
                 }
             }
@@ -42,7 +42,7 @@ pipeline {
                     if (isUnix()) {
                         sh 'docker build -t $DOCKER_IMAGE .'
                     } else {
-                        error "This pipeline is designed to run on a Unix-based system."
+                        bat 'docker build -t %DOCKER_IMAGE% .'
                     }
                 }
             }
@@ -57,7 +57,10 @@ pipeline {
                             sh 'docker push $DOCKER_IMAGE:latest'
                         }
                     } else {
-                        error "This pipeline is designed to run on a Unix-based system."
+                        withDockerRegistry([credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
+                            bat 'docker tag %DOCKER_IMAGE% %DOCKER_IMAGE%:latest'
+                            bat 'docker push %DOCKER_IMAGE%:latest'
+                        }
                     }
                 }
             }
@@ -73,12 +76,3 @@ pipeline {
                             ssh user@your-server 'docker stop vaadin-app || true'
                             ssh user@your-server 'docker run -d --rm -p 8080:8080 --name vaadin-app $DOCKER_IMAGE:latest'
                             """
-                        }
-                    } else {
-                        error "This pipeline is designed to run on a Unix-based system."
-                    }
-                }
-            }
-        }
-    }
-}
