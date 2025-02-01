@@ -75,6 +75,35 @@ pipeline {
             }
         }
 
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    echo "Deploying with Docker Compose..."
+
+                    // Check if the environment is Unix or Windows
+                    if (isUnix()) {
+                        // Run Docker Compose for Unix-based systems (Linux/macOS)
+                        sh 'docker-compose -f docker-compose.yml up -d'
+
+                        // Verify if everything is running correctly
+                        sh 'docker-compose ps'
+
+                        // Optionally check logs to ensure everything started correctly
+                        sh 'docker-compose logs'
+                    } else {
+                        // For Windows systems, use the Windows command to run Docker Compose
+                        bat 'docker-compose -f docker-compose.yml up -d'
+
+                        // Verify if everything is running correctly
+                        bat 'docker-compose ps'
+
+                        // Optionally check logs to ensure everything started correctly
+                        bat 'docker-compose logs'
+                    }
+                }
+            }
+        }
+
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
@@ -89,14 +118,6 @@ pipeline {
                             bat 'docker push "%DOCKER_IMAGE%:latest"'
                         }
                     }
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    echo "Deployment to Docker Hub complete. No deployment to a server configured for this pipeline."
                 }
             }
         }
