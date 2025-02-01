@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven' // Ensure that 'Maven' matches the name configured in the Jenkins global tool configuration
+    }
+
     environment {
         DOCKER_IMAGE = "myrepo/my-vaadin-app"
     }
