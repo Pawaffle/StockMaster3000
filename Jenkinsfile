@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+   tools {
+        maven 'Maven'  // This is the name you gave your Maven installation in Jenkins
+    }
+
     environment {
         DOCKER_IMAGE = "saedabukar/stockmaster3000"  // Replace with your Docker Hub repository name
     }
