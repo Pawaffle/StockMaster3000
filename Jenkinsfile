@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/your-vaadin-app.git'
+                git 'https://github.com/Pawaffle/StockMaster3000.git'
             }
         }
 
