@@ -10,7 +10,7 @@ COPY src ./src
 
 # Run the Maven build to create the JAR file
 # Delete the test skipper later
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Pproduction -DskipTests
 
 # Stage 2: Run the JAR file
 FROM eclipse-temurin:17-jre

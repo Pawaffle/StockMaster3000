@@ -21,9 +21,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn clean package -DskipTests'
+                        sh 'mvn clean package -Pproduction -DskipTests'
                     } else {
-                        bat 'mvn clean package -DskipTests'
+                        bat 'mvn clean package -Pproduction -DskipTests'
                     }
                 }
             }
